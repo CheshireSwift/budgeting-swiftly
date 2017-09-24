@@ -2,62 +2,78 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 import logo from './logo.svg'
 import './App.css'
-
-const MONZO_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjaSI6Im9hdXRoY2xpZW50XzAwMDA5NFB2SU5ER3pUM2s2dHo4anAiLCJleHAiOjE1MDYyMjU3MjksImlhdCI6MTUwNjIwNDEyOSwianRpIjoidG9rXzAwMDA5T3AwbmFjSFVQNE5VajNyVW4iLCJ1aSI6InVzZXJfMDAwMDlHeEphYURlam1sWHVGak4xViIsInYiOiIyIn0.EsveqDsBB3fnnpAYqXz0AHKHIC-enJ49PrAzXgo5NjE'
-
-const AUTH_HEADERS = new Headers({
-  'authorization': 'Bearer ' + MONZO_TOKEN
-})
+import { listAccounts, listTransactions } from './monzo'
 
 const LOADING = <div><img src={logo} className="App-logo" alt="logo" /></div>
-
-function monzoUrl(endpoint) {
-  return `https://api.monzo.com/${endpoint}`
-}
-
-function getAccounts() {
-  return fetch(monzoUrl('accounts'), { headers: AUTH_HEADERS })
-    .then(res => res.json())
-    .catch(e => e)
-}
-
-function getAccount(accountId) {
-  return fetch(monzoUrl('transactions') + '?account_id=' + accountId, {headers: AUTH_HEADERS})
-    .then(res => res.json())
-    .catch(e => e)
-}
 
 export class AccountProvider extends Component {
   constructor(props) {
     super(props)
-    this.load = this.load.bind(this)
+    this.selectAccount = this.selectAccount.bind(this)
     this.state = {
-      accounts: undefined
+      token: undefined,
+      accounts: undefined,
+      selectedAccount: undefined
     }
   }
 
   load() {
-    getAccounts().then(response => {
-      console.log(response)
-      this.setState({accounts: response.accounts})
+    listAccounts(this.state.token).then(response => {
+      this.setState({accounts: _.keyBy(response.accounts, 'id')})
     })
   }
 
+  selectAccount(e) {
+    this.setState({
+      selectedAccount: this.state.accounts[e.currentTarget.value]
+    })
+  }
+
+  accountPicker() {
+    const accountOptions = _.map(this.state.accounts, account =>
+      <option key={account.id} value={account.id}>
+        {account.description} (created {account.created})
+      </option>
+    )
+
+    return (
+      <select onChange={this.selectAccount}>
+        <option value={undefined}>Account</option>
+        {accountOptions}
+      </select>
+    )
+  }
+
   render() {
+    if (!this.state.token) {
+      return (
+        <div>
+          <input ref={c => this.tokenField = c} type="text" />
+          <button onClick={() => this.setState({ token: this.tokenField.value }) }>Go</button>
+      </div>
+      )
+    }
+
     if (!this.state.accounts) {
       this.load()
       return LOADING
     }
 
+    if (!this.state.selectedAccount) {
+      return (
+        <div>
+          {this.accountPicker()}
+        </div>
+      )
+    }
+
     return (
-      <div>
-        {_.map(this.state.accounts, account =>
-          <div>
-            <hr />
-            {React.cloneElement(this.props.children, {key: account.id, account})}
-          </div>
-        )}
-      </div>
+      <div>{
+        React.cloneElement(this.props.children, {
+          account: this.state.selectedAccount,
+          token: this.state.token
+        })
+      }</div>
     )
   }
 }
@@ -65,33 +81,34 @@ export class AccountProvider extends Component {
 export class AccountInfo extends Component {
   constructor(props) {
     super(props)
-    this.load = this.load.bind(this)
     this.state = {
-      account: undefined
+      transactions: undefined
     }
   }
 
-  load(account) {
-    getAccount(account.id).then(response => {
-      this.setState({account: response.transactions})
+  load(accountId) {
+    listTransactions(this.props.token, accountId).then(response => {
+      this.setState({transactions: response.transactions})
     })
   }
 
   render() {
-    if (!this.state.account) {
-      this.load(this.props.account)
+    if (!this.state.transactions) {
+      this.load(this.props.account.id)
       return LOADING
     }
 
     return (
       //<pre>{JSON.stringify(this.state.account, null, 2)}</pre>
       <table style={{textAlign: 'left'}}>
-        {_.map(this.state.account, x => (
-          <tr>
-            <td>{x.description}</td>
-            <td>{x.amount}</td>
-          </tr>
-        ))}
+        <tbody>
+          {_.map(this.state.transactions, transaction => (
+            <tr key={transaction.id}>
+              <td>{transaction.description}</td>
+              <td>{transaction.amount}</td>
+            </tr>
+          ))}
+        </tbody>
       </table>
     )
   }

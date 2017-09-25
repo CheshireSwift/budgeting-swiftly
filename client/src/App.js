@@ -9,6 +9,8 @@ class App extends Component {
     this.state = {
       token: undefined
     }
+
+    fetch('/api/test').then(x => console.log(x))
   }
 
   render() {

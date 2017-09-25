@@ -1,0 +1,23 @@
+{
+  "name": "budgeting-swiftly",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CheshireSwift/budgeting-swiftly.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CheshireSwift/budgeting-swiftly/issues"
+  },
+  "homepage": "https://github.com/CheshireSwift/budgeting-swiftly#readme",
+  "dependencies": {
+    "express": "^4.15.5"
+  }
+}

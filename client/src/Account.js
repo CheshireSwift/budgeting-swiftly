@@ -1,13 +1,72 @@
 import React, { Component } from 'react'
+import { LinearProgress, List, ListItem } from 'material-ui'
+import MapsDirectionsTransit from 'material-ui/svg-icons/maps/directions-transit'
+import MapsLocalDining from 'material-ui/svg-icons/maps/local-dining'
+import MapsRestaurant from 'material-ui/svg-icons/maps/restaurant'
+import MapsFlight from 'material-ui/svg-icons/maps/flight'
+import MapsStoreMallDirectory from 'material-ui/svg-icons/maps/store-mall-directory'
+import MapsLocalMovies from 'material-ui/svg-icons/maps/local-movies'
+import MapsLocalAtm from 'material-ui/svg-icons/maps/local-atm'
+import MapsLocalMall from 'material-ui/svg-icons/maps/local-mall'
+import MapsLocalOffer from 'material-ui/svg-icons/maps/local-offer'
 import _ from 'lodash'
 import numeral from 'numeral'
+import numeralen from "numeral/locales/en-gb"
 
 import { listAccounts, listTransactions } from './monzo'
 
 import logo from './logo.svg'
-import './App.css'
+import './Account.css'
+
+numeral.locale('en-gb')
 
 const LOADING = <div><img src={logo} className="App-logo" alt="logo" /></div>
+
+const emoji = _.mapValues({
+  uk_prepaid: 0x1F45B,
+  uk_retail: 0x1F3E6,
+  transport: 0x1F686,
+  eating_out: 0x1F35B,
+  holidays: 0x1F334,
+  groceries: 0x1F6D2,
+  entertainment: 0x1F3AE,
+  cash: 0x1F4B8,
+  shopping: 0x1F48E,
+  general: 0x1F516
+}, cp => String.fromCodePoint(cp))
+
+const content = {
+  transport: 'Transport',
+  eating_out: 'Eating Out',
+  holidays: 'Holidays',
+  groceries: 'Groceries',
+  entertainment: 'Entertainment',
+  cash: 'Cash',
+  shopping: 'Shopping',
+  general: 'General'
+}
+
+const limits = {
+  transport: 8000,
+  eating_out: 37000,
+  holidays: 4000,
+  groceries: 10000,
+  entertainment: 12000,
+  cash: 6500,
+  shopping: 14500,
+  general: 3000
+}
+
+const icons = {
+  transport: <MapsDirectionsTransit />,
+  eating_out: <MapsRestaurant />,
+  holidays: <MapsFlight />,
+  groceries: <MapsStoreMallDirectory />,
+  entertainment: <MapsLocalMovies />,
+  cash: <MapsLocalAtm />,
+  shopping: <MapsLocalMall />,
+  general: <MapsLocalOffer />
+}
 
 export class AccountProvider extends Component {
   constructor(props) {
@@ -34,7 +93,7 @@ export class AccountProvider extends Component {
   accountPicker() {
     const accountOptions = _.map(this.state.accounts, account =>
       <option key={account.id} value={account.id}>
-        {account.description} (created {account.created})
+        {emoji[account.type]} {account.description} (created {account.created})
       </option>
     )
 
@@ -108,24 +167,56 @@ export class AccountInfo extends Component {
       return LOADING
     }
 
+    const borderRadius = 5
+    const progressColour = _.cond([
+      [x => x > 0.8, _.constant('red')],
+      [x => x > 0.6, _.constant('orange')],
+      [_.stubTrue,   _.constant('lime')]
+    ])
+
     return (
-      <div style={{ textAlign: 'left' }}>
-        <table style={{ margin: 'auto' }}>
+      <div style={{ textAlign: 'left', fontSize: 'x-large' }}>
+        <List style={{ margin: 'auto', width: '60%' }}>
+          {_.map(this.state.categories, (amount, category) => (
+            <ListItem
+              key={category}
+              leftIcon={icons[category]}
+              primaryText={`${content[category]} - ${numeral(amount).format('$0,0.00')}/${numeral(limits[category]).format('$0,0.00')}`}
+              secondaryText={
+                <LinearProgress
+                  mode="determinate"
+                  value={amount}
+                  max={limits[category]}
+                  color={progressColour(amount/limits[category])}
+                />
+              }
+            />
+          ))}
+        </List>
+        <table className="AccountInfo-category-table">
           <tbody>
             {_.map(this.state.categories, (amount, category) => (
               <tr key={category}>
-                <td>{category}</td>
-                <td style={{ textAlign: 'right' }}>{numeral(amount/100).format('0,0.00')}</td>
-                <td style={{ width: 420, border: '1px solid black' }}>
+                <td>{emoji[category]}</td>
+                <td>{content[category]}</td>
+                <td style={{ textAlign: 'right' }}>{numeral(amount/100).format('$0,0.00')}</td>
+                <td>/</td>
+                <td>{numeral(limits[category]/100).format('0,0.00')}</td>
+                <td style={{ width: 200 }}>
+                  <LinearProgress
+                    mode="determinate"
+                    value={amount}
+                    max={limits[category]}
+                    color={progressColour(amount/limits[category])}
+                    style={{ height: 20 }}
+                  />
+                </td>
+                <td style={{ width: 640, border: '2px solid black', padding: 1, borderRadius }}>
                   <div style={{
-                    width: (amount * 100 / this.state.topup) + '%',
-                    height: 20,
-                    backgroundColor: _.cond([
-                      [x => x > 0.8, _.constant('red')],
-                      [x => x > 0.6, _.constant('orange')],
-                      [_.stubTrue,   _.constant('lime')]
-                    ])(amount/this.state.topup)
-                  }}>{_.repeat('|', amount * 100 / this.state.topup)}</div>
+                    width: _.min([1 + amount * 99 / limits[category], 100]) + '%',
+                    borderRadius,
+                    backgroundColor: progressColour(amount/limits[category])
+                  }}>&nbsp;</div>
                 </td>
               </tr>
             ))}

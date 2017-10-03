@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
 import {AccountProvider, AccountInfo} from './Account'
-import logo from './logo.svg'
+
 import './App.css'
 
 class App extends Component {
@@ -15,19 +17,21 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <div style={{ position: 'absolute', right: '1em' }}>
-            <input ref={c => this.tokenField = c} type="text" />
-            <button onClick={() => this.setState({ token: this.tokenField.value }) }>Go</button>
+      <MuiThemeProvider>
+        <div className="App">
+          <div className="App-header">
+            <div style={{ position: 'absolute', right: '1em' }}>
+              <input ref={c => this.tokenField = c} type="text" />
+              <button onClick={() => this.setState({ token: this.tokenField.value }) }>Go</button>
+            </div>
+            <img src="https://monzo.com/static/images/favicon.png" className="App-logo" alt="logo" />
+            <h2>Budgeting, Swiftly</h2>
           </div>
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+          <AccountProvider token={this.state.token}>
+            <AccountInfo></AccountInfo>
+          </AccountProvider>
         </div>
-        <AccountProvider token={this.state.token}>
-          <AccountInfo></AccountInfo>
-        </AccountProvider>
-      </div>
+      </MuiThemeProvider>
     )
   }
 }

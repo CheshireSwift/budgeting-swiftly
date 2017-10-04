@@ -20,5 +20,5 @@ export function listAccounts(token) {
 
 export function listTransactions(token, accountId) {
   // TODO actual date
-  return request(token, 'transactions', { account_id: accountId, since: '2017-09-01' })
+  return request(token, 'transactions', { account_id: accountId, since: '2017-10-01', before: '2017-11-01' })
 }

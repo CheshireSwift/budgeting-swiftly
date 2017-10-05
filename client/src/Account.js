@@ -52,14 +52,14 @@ const content = {
 }
 
 const limits = {
-  transport: 8000,
-  eating_out: 37000,
-  holidays: 4000,
-  groceries: 10000,
-  entertainment: 12000,
-  cash: 6500,
-  shopping: 14500,
-  general: 3000,
+  transport: 10500,
+  eating_out: 57500,
+  holidays: 500,
+  groceries: 5500,
+  entertainment: 9000,
+  cash: 3000,
+  shopping: 3500,
+  general: 2500,
   total: 92000
 }
 

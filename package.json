@@ -7,7 +7,8 @@
     "start": "node index.js",
     "dev": "concurrently --kill-other -n 'server,client' -c 'cyan,magenta' 'nodemon .' 'npm start --prefix client'",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "npm install --prefix client"
+    "postinstall": "npm install --prefix client",
+    "build": "npm run build --prefix client"
   },
   "repository": {
     "type": "git",
@@ -21,9 +22,17 @@
   "homepage": "https://github.com/CheshireSwift/budgeting-swiftly#readme",
   "dependencies": {
     "axios": "^0.16.2",
+    "body-parser": "^1.18.2",
+    "connect-redis": "^3.3.2",
     "dotenv": "^4.0.0",
     "express": "^4.15.5",
-    "morgan": "^1.8.2"
+    "express-session": "^1.15.6",
+    "ioredis": "^3.1.4",
+    "moment": "^2.18.1",
+    "morgan": "^1.8.2",
+    "passport": "^0.4.0",
+    "passport-monzo": "^1.2.0",
+    "passport-oauth2": "^1.4.0"
   },
   "devDependencies": {
     "concurrently": "^3.5.0",

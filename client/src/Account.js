@@ -4,7 +4,6 @@ import { LinearProgress, List, ListItem, Divider } from 'material-ui'
 import DeviceAccessTime from 'material-ui/svg-icons/device/access-time'
 import ImageTimelapse from 'material-ui/svg-icons/image/timelapse'
 import MapsDirectionsTransit from 'material-ui/svg-icons/maps/directions-transit'
-import MapsLocalDining from 'material-ui/svg-icons/maps/local-dining'
 import MapsRestaurant from 'material-ui/svg-icons/maps/restaurant'
 import MapsFlight from 'material-ui/svg-icons/maps/flight'
 import MapsStoreMallDirectory from 'material-ui/svg-icons/maps/store-mall-directory'
@@ -15,6 +14,7 @@ import MapsLocalOffer from 'material-ui/svg-icons/maps/local-offer'
 
 import _ from 'lodash'
 import numeral from 'numeral'
+// eslint-disable-next-line no-unused-vars
 import numeralen from "numeral/locales/en-gb"
 
 import { listAccounts, listTransactions } from './monzo'

@@ -3,6 +3,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 import {AccountProvider, AccountInfo} from './Account'
 
+import logo from './nounswift_invert.png'
 import './App.css'
 
 class App extends Component {
@@ -20,16 +21,16 @@ class App extends Component {
       <MuiThemeProvider>
         <div className="App">
           <div className="App-header">
-            <div style={{ position: 'absolute', right: '1em' }}>
-              <input ref={c => this.tokenField = c} type="text" />
-              <button onClick={() => this.setState({ token: this.tokenField.value }) }>Go</button>
-            </div>
-            <img src="https://monzo.com/static/images/favicon.png" className="App-logo" alt="logo" />
-            <h2>Budgeting, Swiftly</h2>
+            <img src={logo} className="App-logo" alt="logo" />
+            <h1>
+              Budgeting, Swiftly
+            </h1>
           </div>
-          <AccountProvider token={this.state.token}>
+          <AccountProvider>
             <AccountInfo></AccountInfo>
           </AccountProvider>
+          Logo is Bird by Artem  Kovyazin from the Noun Project (modified)
+          <button onClick={() => fetch('/api/test').then(x => console.log(x))}/>
         </div>
       </MuiThemeProvider>
     )

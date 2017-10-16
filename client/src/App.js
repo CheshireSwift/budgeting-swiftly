@@ -9,11 +9,6 @@ import './App.css'
 class App extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      token: undefined
-    }
-
-    fetch('/api/test').then(x => console.log(x))
   }
 
   render() {

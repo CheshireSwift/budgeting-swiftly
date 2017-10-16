@@ -86,7 +86,7 @@ export class AccountProvider extends Component {
   }
 
   load() {
-    listAccounts(this.props.token).then(response => {
+    listAccounts().then(response => {
       this.setState({accounts: _.keyBy(response.accounts, 'id')})
     })
   }
@@ -113,10 +113,6 @@ export class AccountProvider extends Component {
   }
 
   render() {
-    if (!this.props.token) {
-      return <div />
-    }
-
     if (!this.state.accounts) {
       this.load()
       return LOADING
@@ -133,8 +129,7 @@ export class AccountProvider extends Component {
     return (
       <div>{
         React.cloneElement(this.props.children, {
-          account: this.state.selectedAccount,
-          token: this.props.token
+          account: this.state.selectedAccount
         })
       }</div>
     )
@@ -150,7 +145,7 @@ export class AccountInfo extends Component {
   }
 
   load(accountId) {
-    listTransactions(this.props.token, accountId).then(response => {
+    listTransactions(accountId).then(response => {
       const transactions = response.transactions
       const transactionsByCategory = _.groupBy(transactions, 'category')
       const allCategories = _(transactionsByCategory).mapValues(transactions => -_.sumBy(transactions, 'amount'))
@@ -193,10 +188,6 @@ export class AccountInfo extends Component {
   }
 
   render() {
-    if (!this.props.token) {
-      return <div />
-    }
-
     if (!this.state.transactions) {
       this.load(this.props.account.id)
       return LOADING

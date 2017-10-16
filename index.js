@@ -64,7 +64,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  //cookie: { maxAge: 60000 },
+  cookie: { maxAge: 60000 },
   //store: new RedisStore({client: redis})
 }))
 //app.use(bodyParser.urlencoded({ extended: false }));
@@ -74,11 +74,11 @@ app.use(passport.session())
 app.get('/', ensureAuthenticated, (req, res) => { res.redirect('/app') })
 app.use('/app',
   ensureAuthenticated,
-  express.static(path.join(__dirname, 'client/build')),
-  require('./routes/client')
+  express.static(path.join(__dirname, 'client/build'))
+  //require('./routes/client')
 )
 
-//app.use('/api', require('./routes/api'))
+app.use('/api', require('./routes/api'))
 app.use('/auth', require('./routes/auth'))
 
 app.get('/logout', (req, res) => {

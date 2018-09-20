@@ -20,13 +20,13 @@
   },
   "homepage": "https://github.com/CheshireSwift/budgeting-swiftly#readme",
   "dependencies": {
-    "axios": "^0.16.2",
-    "dotenv": "^4.0.0",
+    "axios": "^0.18.0",
+    "dotenv": "^6.0.0",
     "express": "^4.15.5",
     "morgan": "^1.8.2"
   },
   "devDependencies": {
-    "concurrently": "^3.5.0",
+    "concurrently": "^4.0.1",
     "nodemon": "^1.12.1"
   }
 }
